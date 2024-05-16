@@ -32,7 +32,7 @@ struct MyApp {
 
 impl Default for MyApp {
     fn default() -> Self {
-        let data_dir = data_dir().unwrap().join("passmanage");
+        let data_dir = data_dir().unwrap().join("passman");
         fs::create_dir_all(&data_dir).expect("Failed to create data directory");
         let db_path = data_dir.join("passwords.db");
 
