@@ -1,5 +1,5 @@
 [package]
-name = "password-manager"
+name = "passmanage"
 version = "0.1.0"
 edition = "2021"
 
@@ -15,3 +15,6 @@ serde_json = "1.0"
 dirs = "4.0"
 egui = "0.18"
 eframe = "0.18"
+hmac = "0.12"
+generic-array = "0.14"
+rusqlite = "0.27"
