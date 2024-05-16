@@ -9,10 +9,11 @@ use passwordmanager::{derive_key_from_password, encrypt, decrypt, PasswordEntry}
 
 fn main() {
     let options = eframe::NativeOptions::default();
+    
     eframe::run_native(
         "Password Manager",
         options,
-        Box::new(|_cc| Box::new(MyApp::default())),
+        Box::new(|_cc| Box::<MyApp>::default()),
     );
 }
 
@@ -120,20 +121,23 @@ impl MyApp {
 impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
+	    
+	    ctx.set_visuals(egui::Visuals::dark());
+	    
             if !self.logged_in {
                 ui.vertical_centered(|ui| {
                     ui.heading("Login");
                     let password_response = ui.add(egui::TextEdit::singleline(&mut self.master_password)
-                        .password(true)
-                        .hint_text("Master Password"));
-
+						   .password(true)
+						   .hint_text("Master Password"));
                     if password_response.lost_focus() && ui.input().key_pressed(egui::Key::Enter) {
                         self.attempt_login();
                     }
                 });
-            } else {
+	    }
+	    
+	    else {
                 ui.heading("Password Manager");
-
                 ui.horizontal(|ui| {
                     ui.label("Site:");
                     ui.text_edit_singleline(&mut self.site);

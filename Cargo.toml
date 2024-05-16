@@ -17,4 +17,7 @@ egui = "0.18"
 eframe = "0.18"
 hmac = "0.12"
 generic-array = "0.14"
-rusqlite = "0.27"
+
+[dependencies.rusqlite]
+version = "0.27"
+features = ["bundled"]
