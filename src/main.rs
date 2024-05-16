@@ -26,12 +26,12 @@ struct MyApp {
     data_dir: PathBuf,
     conn: Connection,
     passwords: Vec<PasswordEntry>,
-    show_passwords: Vec<bool>, // Keeps track of password visibility states
+    show_passwords: Vec<bool>,
 }
 
 impl Default for MyApp {
     fn default() -> Self {
-        let data_dir = data_dir().unwrap().join("rust-password-manager");
+        let data_dir = data_dir().unwrap().join("passmanage");
         fs::create_dir_all(&data_dir).expect("Failed to create data directory");
         let db_path = data_dir.join("passwords.db");
 
