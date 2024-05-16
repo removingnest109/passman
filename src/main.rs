@@ -77,17 +77,21 @@ impl MyApp {
         rows.map(|entry| entry.unwrap()).collect()
     }
 
-    fn add_entry_to_db(&self, entry: &PasswordEntry) {
+    fn add_entry_to_db(&mut self, entry: &PasswordEntry) {
         self.conn.execute(
             "INSERT INTO passwords (site, username, password) VALUES (?1, ?2, ?3)",
             params![entry.site, entry.username, entry.password],
         ).expect("Failed to insert password entry");
     }
 
-    fn delete_entry_from_db(&self, id: i64) {
+    fn delete_entry_from_db(&mut self, id: i64) {
 	self.conn
             .execute("DELETE FROM passwords WHERE id = ?1", params![id])
             .expect("Failed to delete password entry");
+	
+	self.conn
+            .execute("VACUUM", [])
+            .expect("Failed to execute VACUUM command");
     }
     
     fn update_password_visibility(&mut self) {
