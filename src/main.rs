@@ -194,7 +194,6 @@ impl eframe::App for MyApp {
 			if ui.button("Delete").clicked() {
 			    let id = entry.id;
 			    self.delete_entry_from_db(id.into());
-			    // After deleting, we need to reload passwords and update visibility
 			    self.passwords = self.load_passwords();
 			    self.update_password_visibility();
 			}
