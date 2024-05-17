@@ -1,7 +1,6 @@
 use eframe::egui;
 use rusqlite::{params, Connection};
 use std::fs;
-use std::path::PathBuf;
 use dirs::data_dir;
 
 mod passwordmanager;
@@ -24,7 +23,6 @@ struct MyApp {
     site: String,
     username: String,
     password: String,
-    data_dir: PathBuf,
     conn: Connection,
     passwords: Vec<PasswordEntry>,
     show_passwords: Vec<bool>,
@@ -35,7 +33,6 @@ impl Default for MyApp {
         let data_dir = data_dir().unwrap().join("passman");
         fs::create_dir_all(&data_dir).expect("Failed to create data directory");
         let db_path = data_dir.join("passwords.db");
-
         let conn = Connection::open(&db_path).expect("Failed to open database");
         conn.execute(
             "CREATE TABLE IF NOT EXISTS passwords (
@@ -46,7 +43,6 @@ impl Default for MyApp {
             )",
             [],
         ).expect("Failed to create table");
-
         Self {
             logged_in: false,
             master_password: String::new(),
@@ -54,7 +50,6 @@ impl Default for MyApp {
             site: String::new(),
             username: String::new(),
             password: String::new(),
-            data_dir,
             conn,
             passwords: Vec::new(),
             show_passwords: Vec::new(),
@@ -64,7 +59,9 @@ impl Default for MyApp {
 
 impl MyApp {
     fn load_passwords(&mut self) -> Vec<PasswordEntry> {
-        let mut stmt = self.conn.prepare("SELECT id, site, username, password FROM passwords").expect("Failed to prepare statement");
+        let mut stmt = self.conn.prepare(
+	    "SELECT id, site, username, password FROM passwords"
+	).expect("Failed to prepare statement");
         let rows = stmt.query_map([], |row| {
             Ok(PasswordEntry {
                 id: row.get(0)?,
@@ -73,7 +70,6 @@ impl MyApp {
                 password: row.get(3)?,
             })
         }).expect("Failed to query passwords");
-
         rows.map(|entry| entry.unwrap()).collect()
     }
 
@@ -85,13 +81,12 @@ impl MyApp {
     }
 
     fn delete_entry_from_db(&mut self, id: i64) {
-	self.conn
-            .execute("DELETE FROM passwords WHERE id = ?1", params![id])
-            .expect("Failed to delete password entry");
-	
-	self.conn
-            .execute("VACUUM", [])
-            .expect("Failed to execute VACUUM command");
+	self.conn.execute(
+	    "DELETE FROM passwords WHERE id = ?1", params![id],
+	).expect("Failed to delete password entry");
+	self.conn.execute(
+            "VACUUM", [],
+	).expect("Failed to execute VACUUM command");
     }
     
     fn update_password_visibility(&mut self) {
@@ -99,7 +94,7 @@ impl MyApp {
     }
 
     fn decrypt_all_passwords(&mut self) {
-        if let Some(key) = self.aes_key {
+        if let Some(_key) = self.aes_key {
             let decrypted_passwords: Vec<PasswordEntry> = self.load_passwords().into_iter().map(|entry| {
                 let decrypted_password = decrypt(&self.master_password, &entry.password).expect("Decryption failed");
                 PasswordEntry {
@@ -156,7 +151,7 @@ impl eframe::App for MyApp {
                 });
 
                 if ui.button("Add Entry").clicked() {
-                    if let Some(key) = self.aes_key {
+                    if let Some(_key) = self.aes_key {
                         let encrypted_password = encrypt(&self.master_password, &self.password).expect("Encryption failed");
                         let entry = PasswordEntry {
                             id: 0,
