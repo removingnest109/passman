@@ -3,8 +3,8 @@ use rusqlite::{params, Connection};
 use std::fs;
 use dirs::data_dir;
 
-mod passwordmanager;
-use passwordmanager::{derive_key_from_password, encrypt, decrypt, PasswordEntry};
+mod pbkdf2_AES;
+use pbkdf2_AES::{derive_key_from_password, encrypt, decrypt, PasswordEntry};
 
 fn main() {
     let options = eframe::NativeOptions::default();
