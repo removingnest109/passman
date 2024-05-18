@@ -23,3 +23,4 @@ cargo install
 If you build the program using "cargo install" on linux, it will place the executable in ~/.cargo/bin/
 
 ## Usage
+When you open passman, it will prompt you to login with a master password. This master password is used to derive new encryption keys for each entry into your password database. The database is stored locally in your data directory - for Windows this is %APPDATA%/passman, and for linux this is typically ~/.local/share/passman.
