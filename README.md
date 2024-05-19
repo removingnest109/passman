@@ -29,6 +29,6 @@ For security reasons your master password is never stored on disk, only in memor
 
 ### For example:
 
-You login to passman for the first time with your master password as "examplepassword123", but you do not add any password entries to the database. When you close passman and open it back up, it will still allow you to use any password to login to the empty database.
+You login to passman for the first time with your master password as "password123", but you do not add any password entries to the database. When you close passman and open it back up, it will still allow you to use any password to login to the empty database.
 
 However, if the database has any data in it, it can only be opened with the correct master password. This means if you lose the master password, you will also lose the data on the database. If you are in a scenario where you have lost the password and need to create a new master password, the database must be deleted from the data directory - for Windows this is %APPDATA%/passman, and for linux this is typically ~/.local/share/passman.
