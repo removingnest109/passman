@@ -17,7 +17,7 @@ git clone https://github.com/removingnest109/passman.git
 
 cd passman
 
-cargo install
+cargo install --path .
 ```
 
 If you build the program using "cargo install" on linux, it will place the executable in ~/.cargo/bin/
