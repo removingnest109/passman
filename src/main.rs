@@ -136,43 +136,41 @@ impl eframe::App for MyApp {
 	    }
 	    
 	    else {
-                ui.heading("Password Manager");
-                ui.horizontal(|ui| {
-                    ui.label("Site:");
-                    ui.text_edit_singleline(&mut self.site);
-                });
-                ui.horizontal(|ui| {
-                    ui.label("Username:");
-                    ui.text_edit_singleline(&mut self.username);
-                });
-                ui.horizontal(|ui| {
-                    ui.label("Password:");
-                    ui.text_edit_singleline(&mut self.password);
-                });
-
-                if ui.button("Add Entry").clicked() {
-                    if let Some(_key) = self.aes_key {
-                        let encrypted_password = encrypt(&self.master_password, &self.password).expect("Encryption failed");
-                        let entry = PasswordEntry {
-                            id: 0,
-                            site: self.site.clone(),
-                            username: self.username.clone(),
-                            password: encrypted_password,
-                        };
-                        self.add_entry_to_db(&entry);
-                        self.site.clear();
-                        self.username.clear();
-                        self.password.clear();
-                        self.decrypt_all_passwords();
+		ui.heading("Password Manager");
+		egui::Grid::new("password_entry_ui").num_columns(2).show(ui, |ui| {
+		    ui.label("Site:");
+		    ui.text_edit_singleline(&mut self.site);
+		    ui.end_row();
+		    ui.label("Username:");
+		    ui.text_edit_singleline(&mut self.username);
+		    ui.end_row();
+		    ui.label("Password:");
+		    ui.text_edit_singleline(&mut self.password);
+		    ui.end_row();		    
+                    if ui.button("Add Entry").clicked() {
+			if let Some(_key) = self.aes_key {
+                            let encrypted_password = encrypt(&self.master_password, &self.password).expect("Encryption failed");
+                            let entry = PasswordEntry {
+				id: 0,
+				site: self.site.clone(),
+				username: self.username.clone(),
+				password: encrypted_password,
+                            };
+                            self.add_entry_to_db(&entry);
+                            self.site.clear();
+                            self.username.clear();
+                            self.password.clear();
+                            self.decrypt_all_passwords();
+			}
                     }
-                }
-
+		});
+		
                 ui.separator();
 
                 ui.heading("Stored Passwords:");
-		let passwords_clone = self.passwords.clone();
-		for (i, entry) in passwords_clone.iter().enumerate() {
-		    ui.horizontal(|ui| {
+		egui::Grid::new("password_display_ui").num_columns(6).striped(true).show(ui, |ui| {
+		    let passwords_clone = self.passwords.clone();
+		    for (i, entry) in passwords_clone.iter().enumerate() {
 			ui.label(format!("Site: {}", entry.site));
 			ui.label(format!("Username: {}", entry.username));
 			if self.show_passwords[i] {
@@ -192,9 +190,10 @@ impl eframe::App for MyApp {
 			    self.passwords = self.load_passwords();
 			    self.update_password_visibility();
 			}
-		    });
-		}
-            }
-        });
+			ui.end_row();
+		    }
+		});
+	    }
+	});
     }
 }
