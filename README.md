@@ -1,3 +1,6 @@
+# passman
+passman is a password manager that stores passwords locally in an encrypted database file, using PBKDF2 with AES256-GCM encryption.
+
 ## Installation (Windows)
 To install passman on windows, just download the passman.exe file from the [Releases](https://github.com/removingnest109/passman/releases) page.
 
