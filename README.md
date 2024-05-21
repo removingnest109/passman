@@ -28,7 +28,7 @@ If you build the program using "cargo install" on linux, it will place the execu
 ## Usage
 When you open passman, it will prompt you to login with a master password. This master password is used to derive new, randomly salted encryption keys for each entry into your password database. 
 
-For security reasons your master password is never stored on disk, only in memory after you have entered it to login. This also means that since the master password is only actually used to derive the encryption keys, it will not actually set the master password until an entry is added to the database.
+For security reasons your master password is never stored on disk, only in memory after you have entered it to login. This also means that since the master password is only actually used to derive the encryption keys, the master password is not applied to the database until an entry is added.
 
 ### For example:
 
