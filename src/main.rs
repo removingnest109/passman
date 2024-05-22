@@ -8,7 +8,7 @@ use pbkdf2_aes::{derive_key_from_password, encrypt, decrypt, PasswordEntry};
 
 fn main() {
     let options = eframe::NativeOptions::default();
-    
+
     eframe::run_native(
         "Password Manager",
         options,
@@ -30,10 +30,15 @@ struct MyApp {
 
 impl Default for MyApp {
     fn default() -> Self {
-        let data_dir = data_dir().unwrap().join("passman");
-        fs::create_dir_all(&data_dir).expect("Failed to create data directory");
-        let db_path = data_dir.join("passwords.db");
-        let conn = Connection::open(&db_path).expect("Failed to open database");
+        let data_dir = data_dir()
+	    .unwrap()
+	    .join("passman");
+        fs::create_dir_all(&data_dir)
+	    .expect("Failed to create data directory");
+        let db_path = data_dir
+	    .join("passwords.db");
+        let conn = Connection::open(&db_path)
+	    .expect("Failed to open database");
         conn.execute(
             "CREATE TABLE IF NOT EXISTS passwords (
                 id INTEGER PRIMARY KEY,
@@ -87,7 +92,7 @@ impl MyApp {
             "VACUUM", [],)
 	    .expect("Failed to execute VACUUM command");
     }
-    
+
     fn update_password_visibility(&mut self) {
         self.show_passwords = vec![false; self.passwords.len()];
     }
@@ -118,11 +123,11 @@ impl MyApp {
 
 impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-	
+
         egui::CentralPanel::default().show(ctx, |ui| {
-	    
+
 	    ctx.set_visuals(egui::Visuals::dark());
-	    
+
             if !self.logged_in {
                 ui.vertical_centered(|ui| {
                     ui.heading("Login");
@@ -134,30 +139,30 @@ impl eframe::App for MyApp {
                     }
                 });
 	    }
-	    
+
 	    else {
 		egui::ScrollArea::both()
 		    .auto_shrink([false; 2])
 		    .show(ui, |ui| {
-			
+
 			ui.heading("Password Manager");
-			
+
 			egui::Grid::new("password_entry_ui")
 			    .num_columns(2)
 			    .show(ui, |ui| {
-				
+
 				ui.label("Site:");
 				ui.text_edit_singleline(&mut self.site);
 				ui.end_row();
-				
+
 				ui.label("Username:");
 				ui.text_edit_singleline(&mut self.username);
 				ui.end_row();
-				
+
 				ui.label("Password:");
 				ui.text_edit_singleline(&mut self.password);
 				ui.end_row();
-				
+
 				if ui.button("Add Entry").clicked() {
 				    if let Some(_key) = self.aes_key {
 					let encrypted_password = encrypt(&self.master_password, &self.password)
@@ -176,44 +181,44 @@ impl eframe::App for MyApp {
 				    }
 				}
 			    });
-			
+
 			ui.separator();
 
 			ui.heading("Stored Passwords:");
-			
+
 			egui::Grid::new("password_display_ui")
 			    .num_columns(6)
 			    .striped(true)
 			    .show(ui, |ui| {
-				
+
 				let passwords_clone = self.passwords.clone();
 				for (i, entry) in passwords_clone.iter().enumerate() {
-				    
+
 				    ui.label(format!("Site: {}", entry.site));
-				    
+
 				    ui.label(format!("Username: {}", entry.username));
-				    
+
 				    if self.show_passwords[i] {
 					ui.label(format!("Password: {}", entry.password));
 				    } else {
 					ui.label("Password: ********");
 				    }
-				    
+
 				    if ui.button("Show/Hide").clicked() {
 					self.show_passwords[i] = !self.show_passwords[i];
 				    }
-				    
+
 				    if ui.button("Copy").clicked() {
 					ui.output().copied_text = entry.password.clone();
 				    }
-				    
+
 				    if ui.button("Delete").clicked() {
 					let id = entry.id;
 					self.delete_entry_from_db(id.into());
 					self.passwords = self.load_passwords();
 					self.update_password_visibility();
 				    }
-				    
+
 				    ui.end_row();
 				}
 			    });
